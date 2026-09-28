@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Дашборды команды</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EEF1F4; --panel: #FFFFFF; --ink: #1C2530; --muted: #5B6775;
+    --line: #D5DBE2; --accent: #1F6F5C; --accent-soft: #E3F1EC; --on-accent: #FFFFFF;
+    --err: #A33A2B; --err-soft: #FBEBE8;
+    font-family: "Onest", "Segoe UI", system-ui, -apple-system, sans-serif;
+    color: var(--ink); background: var(--bg);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151A20; --panel: #1D242C; --ink: #E6EBF0; --muted: #98A4B1;
+      --line: #2E3843; --accent: #4FB394; --accent-soft: #1F3530; --on-accent: #0F1A16;
+      --err: #F08F7F; --err-soft: #3A2320;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: var(--bg); line-height: 1.5; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+  .top { padding: 40px 0 28px; }
+  h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 8px; }
+  .lead { margin: 0; color: var(--muted); max-width: 62ch; }
+
+  .banner { max-width: 1040px; margin: 0 auto 20px; padding: 14px 24px; background: var(--err-soft); color: var(--err); font-weight: 500; }
+
+  .layout { display: grid; grid-template-columns: 280px 1fr; gap: 24px; padding-bottom: 48px; align-items: start; }
+  @media (max-width: 760px) { .layout { grid-template-columns: 1fr; } }
+
+  .catalog ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .catalog button {
+    width: 100%; text-align: left; font: inherit; color: var(--ink);
+    background: transparent; border: 0; border-left: 3px solid transparent;
+    padding: 12px 14px; cursor: pointer; border-radius: 0 6px 6px 0;
+  }
+  .catalog button:hover { background: var(--panel); }
+  .catalog button[aria-current="true"] { background: var(--panel); border-left-color: var(--accent); font-weight: 600; }
+  .catalog small { display: block; color: var(--muted); font-weight: 400; font-size: 0.85rem; }
+
+  .detail { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 28px 32px; }
+  .detail h2 { margin: 0; font-size: 1.5rem; letter-spacing: -0.01em; }
+  .detail .note { margin: 4px 0 24px; color: var(--muted); }
+
+  .steps { list-style: none; margin: 0; padding: 0; counter-reset: s; }
+  .step { position: relative; padding: 0 0 24px 44px; counter-increment: s; }
+  .step::before {
+    content: counter(s); position: absolute; left: 0; top: 0;
+    width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+    border: 1.5px solid var(--line); color: var(--muted); font-weight: 600; font-size: 0.9rem;
+  }
+  .step.done::before { content: "✓"; background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .step:not(:last-child)::after { content: ""; position: absolute; left: 14px; top: 34px; bottom: 6px; width: 1.5px; background: var(--line); }
+  .step h3 { margin: 2px 0 6px; font-size: 1.05rem; }
+  .step p { margin: 0 0 12px; max-width: 64ch; }
+  .muted { color: var(--muted); }
+  .fine { font-size: 0.875rem; color: var(--muted); margin-top: 12px !important; }
+  .err { color: var(--err); background: var(--err-soft); padding: 10px 12px; border-radius: 6px; }
+
+  .path { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 14px; }
+  .path code {
+    font-family: "Cascadia Mono", Consolas, monospace; font-size: 0.95rem;
+    background: var(--bg); border: 1px solid var(--line); padding: 8px 12px; border-radius: 6px;
+    overflow-x: auto; max-width: 100%;
+  }
+
+  .btn {
+    font: inherit; font-weight: 600; cursor: pointer; border-radius: 6px;
+    padding: 10px 18px; border: 1.5px solid var(--accent); background: var(--accent); color: var(--on-accent);
+  }
+  .btn:hover { filter: brightness(1.08); }
+  .btn.ghost { background: transparent; color: var(--accent); }
+  .btn.small { padding: 7px 12px; font-size: 0.9rem; }
+  .link { font: inherit; background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; cursor: pointer; }
+  button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+  .file { background: var(--accent-soft); border-radius: 8px; padding: 14px 16px; margin-bottom: 14px; }
+  .fname { font-weight: 600; word-break: break-all; }
+  .meta { color: var(--muted); font-size: 0.9rem; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .actions .link { margin-left: 6px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <h1>Дашборды команды</h1>
+    <p class="lead">Выберите дашборд — страница найдёт его последнюю версию на сетевом диске и откроет её. Файлы никуда не загружаются: браузер читает их прямо с диска.</p>
+  </div>
+</header>
+
+<div id="unsupported" class="banner" hidden>Этот браузер не умеет открывать папки с диска. Откройте страницу в Google Chrome или Microsoft Edge.</div>
+
+<main class="wrap layout">
+  <nav class="catalog" aria-label="Дашборды"><ul id="list"></ul></nav>
+  <section id="detail" class="detail" aria-live="polite"></section>
+</main>
+
+<script>
+/* ============================================================
+   НАСТРОЙКИ — меняйте только этот блок
+   rootPath  — общая папка на диске, которую пользователь выбирает один раз
+   folder    — подпапка дашборда внутри rootPath (можно вложенную: "Отчёты/МТЗ")
+   prefix    — если в папке лежат разные файлы, берутся только начинающиеся с него
+   ============================================================ */
+const CONFIG = {
+  rootPath: 'R:\\Shops\\012\\Дирекция\\РРД\\Задачи\\УТО\\ДБ ПУТО',
+  dashboards: [
+    // folder: '' — файл лежит прямо в rootPath
+    { id: 'puto', title: 'Отработка ПУТО', note: 'Дашборд ПУТО, отдел УТО', folder: '', prefix: 'Отработка_ПУТО' }
+  ]
+};
+
+/* ---------- хранение выбранной папки между визитами ---------- */
+function openDb() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open('dash-launcher', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('kv');
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+}
+async function kvGet(key) {
+  const db = await openDb();
+  return new Promise((res, rej) => {
+    const q = db.transaction('kv').objectStore('kv').get(key);
+    q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error);
+  });
+}
+async function kvSet(key, val) {
+  const db = await openDb();
+  return new Promise((res, rej) => {
+    const tx = db.transaction('kv', 'readwrite');
+    tx.objectStore('kv').put(val, key);
+    tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error);
+  });
+}
+
+/* ---------- состояние ---------- */
+const supported = 'showDirectoryPicker' in window;
+const state = {
+  dash: null,
+  root: null,          // FileSystemDirectoryHandle
+  access: 'none',      // none | prompt | granted
+  loading: false,
+  latest: null,        // File
+  error: '',
+  scanId: 0
+};
+
+/* Сравнение имён без учёта регистра и способа записи букв (й, ё) */
+const norm = s => s.normalize('NFC').toLowerCase();
+
+/* "_v0_12.html" → [0, 12]; "_v1.3.html" → [1, 3]; без номера → null */
+function parseVersion(rest) {
+  const m = rest.match(/v?(\d+(?:[._\-]\d+)*)/);
+  return m ? m[1].split(/[._\-]/).map(Number) : null;
+}
+/* Сначала сравниваем номер версии, при равенстве или без номера — дату изменения */
+function isNewer(verA, fileA, verB, fileB) {
+  if (verA && verB) {
+    for (let i = 0; i < Math.max(verA.length, verB.length); i++) {
+      const a = verA[i] || 0, b = verB[i] || 0;
+      if (a !== b) return a > b;
+    }
+  } else if (verA && !verB) return true;
+  else if (!verA && verB) return false;
+  return fileA.lastModified > fileB.lastModified;
+}
+
+/* Когда путь в настройках меняется, пользователя попросят выбрать папку заново */
+const ROOT_KEY = 'root:' + CONFIG.rootPath;
+
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+const fmtDate = t => new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(t);
+const fmtSize = b => b > 1048576 ? (b / 1048576).toFixed(1).replace('.', ',') + ' МБ' : Math.max(1, Math.round(b / 1024)) + ' КБ';
+
+/* ---------- список дашбордов ---------- */
+function renderList() {
+  document.getElementById('list').innerHTML = CONFIG.dashboards.map(d => `
+    <li><button data-id="${esc(d.id)}" aria-current="${state.dash && state.dash.id === d.id}">
+      ${esc(d.title)}<small>${esc(d.note || '')}</small>
+    </button></li>`).join('');
+}
+document.getElementById('list').addEventListener('click', e => {
+  const b = e.target.closest('button[data-id]');
+  if (b) select(b.dataset.id);
+});
+
+function select(id) {
+  state.dash = CONFIG.dashboards.find(d => d.id === id) || CONFIG.dashboards[0];
+  history.replaceState(null, '', '?d=' + encodeURIComponent(state.dash.id));
+  state.latest = null; state.error = '';
+  renderList();
+  if (state.access === 'granted') scan(); else render();
+}
+
+/* ---------- доступ к папке ---------- */
+async function connect(forcePicker) {
+  try {
+    if (state.root && state.access === 'prompt' && !forcePicker) {
+      const p = await state.root.requestPermission({ mode: 'read' });
+      if (p !== 'granted') return;
+    } else {
+      state.root = await window.showDirectoryPicker({ id: 'dash-root', mode: 'read' });
+      await kvSet(ROOT_KEY, state.root);
+    }
+    state.access = 'granted';
+    scan();
+  } catch (e) {
+    if (e.name !== 'AbortError') { state.error = 'Не удалось открыть папку: ' + e.message; render(); }
+  }
+}
+
+/* ---------- поиск свежего файла ---------- */
+async function scan() {
+  const my = ++state.scanId;
+  const d = state.dash;
+  state.loading = true; state.error = ''; render();
+  let latest = null, latestVer = null, error = '';
+  const where = d.folder ? `подпапке «${d.folder}»` : `папке ${CONFIG.rootPath}`;
+  try {
+    let dir = state.root;
+    for (const part of (d.folder || '').split(/[\\/]/).filter(Boolean)) dir = await dir.getDirectoryHandle(part);
+    const pre = norm(d.prefix || '');
+    for await (const entry of dir.values()) {
+      if (entry.kind !== 'file') continue;
+      const n = norm(entry.name);
+      if (!/\.html?$/.test(n) || n.startsWith('~$')) continue;
+      if (pre && !n.startsWith(pre)) continue;
+      const f = await entry.getFile();
+      const ver = parseVersion(n.slice(pre.length));
+      if (!latest || isNewer(ver, f, latestVer, latest)) { latest = f; latestVer = ver; }
+    }
+    if (!latest) error = `В ${where} нет файлов, название которых начинается с «${d.prefix}» и заканчивается на .html. Проверьте, что выбрана папка ${CONFIG.rootPath}.`;
+  } catch (e) {
+    if (e.name === 'NotFoundError') error = `В выбранной папке нет подпапки «${d.folder}». Проверьте, что выбрана папка ${CONFIG.rootPath}.`;
+    else if (e.name === 'NotAllowedError') { state.access = 'prompt'; }
+    else error = 'Не удалось прочитать папку: ' + e.message;
+  }
+  if (my !== state.scanId) return;           // пользователь уже переключился на другой дашборд
+  state.loading = false; state.latest = latest; state.error = error;
+  render();
+}
+
+/* ---------- действия с файлом ---------- */
+function openLatest() {
+  const url = URL.createObjectURL(state.latest);
+  const w = window.open(url, '_blank');
+  if (!w) location.href = url;
+}
+function downloadLatest() {
+  const url = URL.createObjectURL(state.latest);
+  const a = document.createElement('a');
+  a.href = url; a.download = state.latest.name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+
+/* ---------- карточка дашборда ---------- */
+function render() {
+  const d = state.dash, el = document.getElementById('detail');
+  const granted = state.access === 'granted';
+
+  let step1;
+  if (granted) {
+    step1 = `<p>Папка подключена: <b>${esc(state.root.name)}</b>. <button class="link" data-act="repick">Выбрать другую</button></p>`;
+  } else if (state.access === 'prompt') {
+    step1 = `<p>Вы уже выбирали папку раньше — браузеру нужно одно подтверждение.</p>
+      <button class="btn" data-act="connect" ${supported ? '' : 'disabled'}>Разрешить доступ</button>
+      <p class="fine">Не та папка? <button class="link" data-act="repick">Выбрать заново</button></p>`;
+  } else {
+    step1 = `<p>Скопируйте путь, нажмите «Выбрать папку» и вставьте путь в адресную строку открывшегося окна.</p>
+      <div class="path"><code>${esc(CONFIG.rootPath)}</code><button class="btn ghost small" data-act="copy">Копировать путь</button></div>
+      <button class="btn" data-act="connect" ${supported ? '' : 'disabled'}>Выбрать папку</button>
+      <p class="fine">Браузер спросит, можно ли сайту просматривать файлы в этой папке, — подтвердите. Выбор запомнится для всех дашбордов.</p>`;
+  }
+
+  let step2;
+  if (!granted) step2 = `<p class="muted">Появится после подключения папки.</p>`;
+  else if (state.loading) step2 = `<p class="muted">Ищу последний файл…</p>`;
+  else if (state.error) step2 = `<p class="err">${esc(state.error)}</p><button class="link" data-act="refresh">Проверить снова</button>`;
+  else if (state.latest) step2 = `
+      <div class="file">
+        <div class="fname">${esc(state.latest.name)}</div>
+        <div class="meta">Обновлён ${fmtDate(state.latest.lastModified)}, ${fmtSize(state.latest.size)}</div>
+      </div>
+      <div class="actions">
+        <button class="btn" data-act="open">Открыть</button>
+        <button class="btn ghost" data-act="download">Скачать</button>
+        <button class="link" data-act="refresh">Проверить снова</button>
+      </div>`;
+  else step2 = '';
+
+  el.innerHTML = `
+    <h2>${esc(d.title)}</h2>
+    <p class="note">${esc(d.note || '')}</p>
+    <ol class="steps">
+      <li class="step ${granted ? 'done' : ''}"><h3>Доступ к папке с дашбордами</h3>${step1}</li>
+      <li class="step ${state.latest && granted ? 'done' : ''}"><h3>Последняя версия</h3>${step2}</li>
+    </ol>`;
+}
+
+document.getElementById('detail').addEventListener('click', async e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const act = b.dataset.act;
+  if (act === 'connect') connect(false);
+  if (act === 'repick') connect(true);
+  if (act === 'refresh') scan();
+  if (act === 'open') openLatest();
+  if (act === 'download') downloadLatest();
+  if (act === 'copy') {
+    try { await navigator.clipboard.writeText(CONFIG.rootPath); b.textContent = 'Скопировано'; }
+    catch { b.textContent = 'Выделите путь вручную'; }
+    setTimeout(() => { b.textContent = 'Копировать путь'; }, 2000);
+  }
+});
+
+/* если кураторы положили новый файл, пока вкладка была в фоне */
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && state.access === 'granted' && !state.loading) scan();
+});
+
+/* ---------- запуск ---------- */
+(async function init() {
+  if (!supported) document.getElementById('unsupported').hidden = false;
+  if (supported) {
+    try {
+      const saved = await kvGet(ROOT_KEY);
+      if (saved) {
+        state.root = saved;
+        state.access = (await saved.queryPermission({ mode: 'read' })) === 'granted' ? 'granted' : 'prompt';
+      }
+    } catch { /* нет сохранённой папки — начнём с выбора */ }
+  }
+  const id = new URLSearchParams(location.search).get('d');
+  select(id);
+})();
+</script>
+</body>
+</html>
