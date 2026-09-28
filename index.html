@@ -3,166 +3,227 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Дашборды команды</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1B2227">
+<title>Отработка задач</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #EEF1F4; --panel: #FFFFFF; --ink: #1C2530; --muted: #5B6775;
-    --line: #D5DBE2; --accent: #1F6F5C; --accent-soft: #E3F1EC; --on-accent: #FFFFFF;
-    --err: #A33A2B; --err-soft: #FBEBE8;
-    font-family: "Onest", "Segoe UI", system-ui, -apple-system, sans-serif;
-    color: var(--ink); background: var(--bg);
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #151A20; --panel: #1D242C; --ink: #E6EBF0; --muted: #98A4B1;
-      --line: #2E3843; --accent: #4FB394; --accent-soft: #1F3530; --on-accent: #0F1A16;
-      --err: #F08F7F; --err-soft: #3A2320;
-    }
+    --night: #1B2227; --night-2: #232C31; --night-line: #36414A;
+    --amber: #F2B705; --amber-soft: #FFF3C7; --amber-ink: #6B5000;
+    --paper: #F2F3F3; --card: #FFFFFF; --ink: #1B2227; --muted: #5E6A72; --line: #DCE0E2;
+    --ok: #5CC08A; --err: #A33A2B; --err-soft: #FBEBE8;
+    font-family: "Onest", "Segoe UI", system-ui, sans-serif;
   }
   * { box-sizing: border-box; }
-  body { margin: 0; min-height: 100vh; background: var(--bg); line-height: 1.5; }
-  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
-  .top { padding: 40px 0 28px; }
-  h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 8px; }
-  .lead { margin: 0; color: var(--muted); max-width: 62ch; }
+  html, body { margin: 0; }
+  body { background: var(--night); color: var(--ink); line-height: 1.5; }
+  button { font: inherit; }
+  button:focus-visible { outline: 3px solid var(--amber); outline-offset: 3px; }
+  [hidden] { display: none !important; }
 
-  .banner { max-width: 1040px; margin: 0 auto 20px; padding: 14px 24px; background: var(--err-soft); color: var(--err); font-weight: 500; }
+  /* ---------- приветствие ---------- */
+  .hello { min-height: 100vh; background: var(--night); color: #EEF1F2; display: flex; align-items: center; }
+  .hello-inner { width: 100%; max-width: 1100px; margin: 0 auto; padding: 64px 32px; }
+  .hi { position: relative; display: inline-block; margin: 0; font-size: clamp(2.6rem, 7.5vw, 5.8rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.02; }
+  .hi-text { display: inline-block; clip-path: inset(0 100% 0 0); }
+  .beam { position: absolute; top: -10%; bottom: -10%; left: 0; width: 3px; background: var(--amber); opacity: 0;
+          box-shadow: 0 0 14px 3px rgba(242,183,5,.6), 0 0 70px 14px rgba(242,183,5,.2); }
+  .ask { margin: 20px 0 0; min-height: 1.5em; font-size: clamp(1.25rem, 2.6vw, 1.8rem); color: #B9C3C8; }
+  .caret { display: inline-block; width: 2px; height: 1.05em; margin-left: 4px; vertical-align: -0.14em; background: var(--amber); animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
 
-  .layout { display: grid; grid-template-columns: 280px 1fr; gap: 24px; padding-bottom: 48px; align-items: start; }
-  @media (max-width: 760px) { .layout { grid-template-columns: 1fr; } }
+  .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 56px; }
+  @media (max-width: 720px) { .modes { grid-template-columns: 1fr; } }
+  .mode { position: relative; overflow: hidden; display: grid; gap: 8px; align-content: start; text-align: left; cursor: pointer;
+          color: inherit; background: var(--night-2); border: 1px solid var(--night-line); border-radius: 16px; padding: 30px 30px 26px;
+          opacity: 0; transform: translateY(26px); pointer-events: none; transition: border-color .25s, background .25s; }
+  .mode.in { opacity: 1; transform: none; pointer-events: auto;
+             transition: opacity .6s ease, transform .7s cubic-bezier(.2,.7,.2,1), border-color .25s, background .25s; }
+  .mode::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--amber); transform: scaleX(0); transform-origin: left; transition: transform .4s cubic-bezier(.2,.7,.2,1); }
+  .mode:hover, .mode:focus-visible { border-color: #4A565E; background: #273137; }
+  .mode:hover::after, .mode:focus-visible::after { transform: scaleX(1); }
+  .mode-name { font-size: clamp(1.7rem, 3.2vw, 2.3rem); font-weight: 800; letter-spacing: -0.02em; transition: color .25s; }
+  .mode:hover .mode-name, .mode:focus-visible .mode-name { color: var(--amber); }
+  .mode-desc { color: #AEB8BE; max-width: 38ch; }
+  .mode-count { margin-top: 18px; color: #8A959C; font-size: .95rem; }
+  .hello-foot { margin: 44px 0 0; color: #7F8A91; font-size: .9rem; opacity: 0; transition: opacity .8s; }
+  .hello-foot.in { opacity: 1; }
 
-  .catalog ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
-  .catalog button {
-    width: 100%; text-align: left; font: inherit; color: var(--ink);
-    background: transparent; border: 0; border-left: 3px solid transparent;
-    padding: 12px 14px; cursor: pointer; border-radius: 0 6px 6px 0;
-  }
-  .catalog button:hover { background: var(--panel); }
-  .catalog button[aria-current="true"] { background: var(--panel); border-left-color: var(--accent); font-weight: 600; }
-  .catalog small { display: block; color: var(--muted); font-weight: 400; font-size: 0.85rem; }
+  /* ---------- экран дашбордов ---------- */
+  .app { position: fixed; inset: 0; overflow-y: auto; background: var(--paper); z-index: 10; }
+  .bar { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 14px 18px;
+         padding: 12px 20px; background: var(--night); color: #fff; border-bottom: 3px solid var(--amber); }
+  .back { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 8px; border: 1px solid var(--night-line); background: none; color: #fff; cursor: pointer; }
+  .back:hover { border-color: var(--amber); color: var(--amber); }
+  .brand { font-weight: 700; letter-spacing: -0.01em; }
+  .tabs { display: flex; padding: 3px; border-radius: 9px; background: #2A343A; }
+  .tabs button { border: 0; background: none; color: #C3CCD1; font-weight: 600; padding: 7px 16px; border-radius: 7px; cursor: pointer; transition: background .2s, color .2s; }
+  .tabs button[aria-selected="true"] { background: var(--amber); color: var(--night); }
+  .folder { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: .9rem; color: #AEB8BE; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #6B767D; }
+  .dot.ok { background: var(--ok); }
+  .folder .link { color: var(--amber); }
 
-  .detail { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 28px 32px; }
-  .detail h2 { margin: 0; font-size: 1.5rem; letter-spacing: -0.01em; }
-  .detail .note { margin: 4px 0 24px; color: var(--muted); }
+  .page { max-width: 1100px; margin: 0 auto; padding: 40px 24px 72px; }
+  .mode-head h2 { margin: 0; font-size: clamp(1.8rem, 3.5vw, 2.4rem); font-weight: 800; letter-spacing: -0.025em; }
+  .mode-head p { margin: 4px 0 0; color: var(--muted); }
 
-  .steps { list-style: none; margin: 0; padding: 0; counter-reset: s; }
-  .step { position: relative; padding: 0 0 24px 44px; counter-increment: s; }
-  .step::before {
-    content: counter(s); position: absolute; left: 0; top: 0;
-    width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
-    border: 1.5px solid var(--line); color: var(--muted); font-weight: 600; font-size: 0.9rem;
-  }
-  .step.done::before { content: "✓"; background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
-  .step:not(:last-child)::after { content: ""; position: absolute; left: 14px; top: 34px; bottom: 6px; width: 1.5px; background: var(--line); }
-  .step h3 { margin: 2px 0 6px; font-size: 1.05rem; }
-  .step p { margin: 0 0 12px; max-width: 64ch; }
-  .muted { color: var(--muted); }
-  .fine { font-size: 0.875rem; color: var(--muted); margin-top: 12px !important; }
-  .err { color: var(--err); background: var(--err-soft); padding: 10px 12px; border-radius: 6px; }
-
+  .access { margin: 28px 0 0; padding: 22px 24px; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--amber); border-radius: 12px; }
+  .access h3 { margin: 0 0 6px; font-size: 1.1rem; }
+  .access p { margin: 0 0 14px; max-width: 70ch; }
+  .access .fine { margin: 12px 0 0; font-size: .875rem; color: var(--muted); }
+  .access.error { border-left-color: var(--err); }
+  .access.error h3 { color: var(--err); }
   .path { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 14px; }
-  .path code {
-    font-family: "Cascadia Mono", Consolas, monospace; font-size: 0.95rem;
-    background: var(--bg); border: 1px solid var(--line); padding: 8px 12px; border-radius: 6px;
-    overflow-x: auto; max-width: 100%;
-  }
+  .path code { font-family: "Cascadia Mono", Consolas, monospace; font-size: .92rem; background: var(--paper); border: 1px solid var(--line); padding: 8px 12px; border-radius: 7px; max-width: 100%; overflow-x: auto; white-space: nowrap; }
+  .btn { cursor: pointer; font-weight: 700; padding: 10px 18px; border-radius: 8px; border: 1.5px solid var(--amber); background: var(--amber); color: var(--night); }
+  .btn:hover { filter: brightness(1.06); }
+  .btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+  .btn.small { padding: 7px 12px; font-size: .9rem; }
+  .link { border: 0; background: none; padding: 0; color: var(--amber-ink); text-decoration: underline; cursor: pointer; }
 
-  .btn {
-    font: inherit; font-weight: 600; cursor: pointer; border-radius: 6px;
-    padding: 10px 18px; border: 1.5px solid var(--accent); background: var(--accent); color: var(--on-accent);
-  }
-  .btn:hover { filter: brightness(1.08); }
-  .btn.ghost { background: transparent; color: var(--accent); }
-  .btn.small { padding: 7px 12px; font-size: 0.9rem; }
-  .link { font: inherit; background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; cursor: pointer; }
-  button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 20px; margin-top: 32px; perspective: 1100px; }
+  .cell { animation: rise .65s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i) * 80ms); }
+  @keyframes rise { from { opacity: 0; transform: translateY(30px) scale(.96); } to { opacity: 1; transform: none; } }
 
-  .file { background: var(--accent-soft); border-radius: 8px; padding: 14px 16px; margin-bottom: 14px; }
-  .fname { font-weight: 600; word-break: break-all; }
-  .meta { color: var(--muted); font-size: 0.9rem; }
-  .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-  .actions .link { margin-left: 6px; }
+  .dash { position: relative; overflow: hidden; height: 100%; min-height: 220px; display: flex; flex-direction: column;
+          background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px;
+          transition: transform .3s cubic-bezier(.2,.7,.2,1), box-shadow .3s, border-color .3s; will-change: transform; }
+  .dash::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .3s;
+                  background: radial-gradient(280px circle at var(--mx, 50%) var(--my, 0%), rgba(242,183,5,.24), transparent 65%); }
+  .dash::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--amber); transform: scaleX(0); transform-origin: left; transition: transform .45s cubic-bezier(.2,.7,.2,1); }
+  .dash.ready:hover, .dash.ready:focus-within { border-color: #C9CFD2; box-shadow: 0 18px 40px -18px rgba(27,34,39,.45); }
+  .dash.ready:hover::before, .dash.ready:focus-within::before { opacity: 1; }
+  .dash.ready:hover::after, .dash.ready:focus-within::after { transform: scaleX(1); }
+  .dash.off { opacity: .62; }
+
+  .mark { width: 50px; height: 50px; border-radius: 12px; display: grid; place-items: center; background: var(--night); color: var(--amber); font-weight: 800; font-size: 1.05rem; letter-spacing: -0.02em; }
+  .dash h3 { margin: 18px 0 6px; font-size: 1.22rem; font-weight: 700; letter-spacing: -0.01em; }
+  .open { all: unset; cursor: pointer; }
+  .open::after { content: ""; position: absolute; inset: 0; z-index: 1; }
+  .open:focus-visible { outline: none; }
+  .dash:has(.open:focus-visible) { outline: 3px solid var(--amber); outline-offset: 3px; }
+  .open:disabled { cursor: default; }
+  .ver { align-self: flex-start; display: inline-block; padding: 2px 9px; border-radius: 999px; background: var(--amber-soft); color: var(--amber-ink); font-weight: 700; font-size: .8rem; }
+  .meta { margin: 8px 0 0; color: var(--muted); font-size: .88rem; }
+  .meta.bad { color: var(--err); }
+  .dash-foot { margin-top: auto; padding-top: 18px; display: flex; align-items: center; justify-content: space-between; }
+  .go { font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
+  .go svg { transition: transform .3s; }
+  .dash.ready:hover .go svg { transform: translate(3px, -3px); }
+  .dl { position: relative; z-index: 2; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 9px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
+  .dl:hover { border-color: var(--amber); background: var(--amber-soft); }
+  .skeleton { display: inline-block; width: 140px; height: .9em; border-radius: 4px; vertical-align: middle;
+              background: linear-gradient(90deg, #E8EBEC 0%, #F6F7F7 50%, #E8EBEC 100%); background-size: 200% 100%; animation: shimmer 1.2s linear infinite; }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  }
 </style>
 </head>
 <body>
-<header class="top">
-  <div class="wrap">
-    <h1>Дашборды команды</h1>
-    <p class="lead">Выберите дашборд — страница найдёт его последнюю версию на сетевом диске и откроет её. Файлы никуда не загружаются: браузер читает их прямо с диска.</p>
+
+<section id="hello" class="hello">
+  <div class="hello-inner">
+    <h1 class="hi" aria-label="Привет, коллега!"><span class="hi-text" id="hiText">Привет, коллега!</span><span class="beam" id="beam" aria-hidden="true"></span></h1>
+    <p class="ask" aria-label="Чем хочешь заняться?"><span id="askText" aria-hidden="true"></span><span class="caret" aria-hidden="true"></span></p>
+
+    <div class="modes">
+      <button class="mode" data-mode="work">
+        <span class="mode-name">Отработать</span>
+        <span class="mode-desc">Открыть свежую версию дашборда и поработать с задачами</span>
+        <span class="mode-count" data-count="work"></span>
+      </button>
+      <button class="mode" data-mode="collect">
+        <span class="mode-name">Собрать</span>
+        <span class="mode-desc">Для кураторов: файлы, в которые собирается отработка команды</span>
+        <span class="mode-count" data-count="collect"></span>
+      </button>
+    </div>
+    <p class="hello-foot" id="helloFoot">Файлы открываются прямо с диска R. Страница ничего не загружает в интернет.</p>
   </div>
-</header>
+</section>
 
-<div id="unsupported" class="banner" hidden>Этот браузер не умеет открывать папки с диска. Откройте страницу в Google Chrome или Microsoft Edge.</div>
-
-<main class="wrap layout">
-  <nav class="catalog" aria-label="Дашборды"><ul id="list"></ul></nav>
-  <section id="detail" class="detail" aria-live="polite"></section>
-</main>
+<section id="app" class="app" hidden>
+  <header class="bar">
+    <button class="back" id="back" aria-label="К выбору занятия">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <span class="brand">Отработка задач</span>
+    <div class="tabs" role="tablist" aria-label="Режим">
+      <button role="tab" data-tab="work">Отработать</button>
+      <button role="tab" data-tab="collect">Собрать</button>
+    </div>
+    <div class="folder" id="folderState"></div>
+  </header>
+  <main class="page">
+    <div class="mode-head"><h2 id="modeTitle"></h2><p id="modeDesc"></p></div>
+    <div id="access"></div>
+    <div class="grid" id="grid"></div>
+  </main>
+</section>
 
 <script>
 /* ============================================================
    НАСТРОЙКИ — меняйте только этот блок
-   rootPath  — общая папка на диске, которую пользователь выбирает один раз
-   folder    — подпапка дашборда внутри rootPath (можно вложенную: "Отчёты/МТЗ")
-   prefix    — если в папке лежат разные файлы, берутся только начинающиеся с него
+   rootPath — общая папка, которую пользователь выбирает один раз
+   folder   — подпапка режима внутри rootPath ('' — сама папка)
+   prefix   — начало названия файла; из всех подходящих берётся самая новая версия
+   mark     — 1–3 символа на плитке
+   desc     — короткое описание под названием (можно оставить пустым)
    ============================================================ */
 const CONFIG = {
-  rootPath: 'R:\\Shops\\012\\Дирекция\\РРД\\Задачи\\УТО\\ДБ ПУТО',
-  dashboards: [
-    // folder: '' — файл лежит прямо в rootPath
-    { id: 'puto', title: 'Отработка ПУТО', note: 'Дашборд ПУТО, отдел УТО', folder: '', prefix: 'Отработка_ПУТО' }
-  ]
+  rootPath: 'R:\\Shops\\012\\Дирекция\\РРД\\Задачи\\Отработка задач',
+  modes: {
+    work: {
+      title: 'Отработать',
+      desc: 'Свежие версии дашбордов для работы с задачами',
+      folder: '',
+      dashboards: [
+        { id: 'bs-mtz',      title: 'BS-МТЗ',         mark: 'BS', prefix: 'BS-МТЗ',         desc: '' },
+        { id: 'novinki',     title: 'Новинки',        mark: 'Нв', prefix: 'Новинки',        desc: '' },
+        { id: 'puto',        title: 'Отработка ПУТО', mark: 'ПТ', prefix: 'Отработка_ПУТО', desc: '' },
+        { id: 'proekty-mtz', title: 'Проекты-МТЗ',    mark: 'Пр', prefix: 'Проекты-МТЗ',    desc: '' }
+      ]
+    },
+    collect: {
+      title: 'Собрать',
+      desc: 'Для кураторов: сборка файлов отработки',
+      folder: 'Для сборок',
+      dashboards: [
+        { id: 'bs-analyst',      title: 'BS-аналитик',      mark: 'BS', prefix: 'BS-аналитик',      desc: '' },
+        { id: 'proekty-analyst', title: 'Проекты-Аналитик', mark: 'Пр', prefix: 'Проекты-Аналитик', desc: '' },
+        { id: 'puto-curator',    title: 'ПУТО куратор',     mark: 'ПТ', prefix: 'ПУТО_куратор',     desc: '' }
+      ]
+    }
+  }
 };
 
-/* ---------- хранение выбранной папки между визитами ---------- */
-function openDb() {
-  return new Promise((res, rej) => {
-    const r = indexedDB.open('dash-launcher', 1);
-    r.onupgradeneeded = () => r.result.createObjectStore('kv');
-    r.onsuccess = () => res(r.result);
-    r.onerror = () => rej(r.error);
-  });
-}
-async function kvGet(key) {
-  const db = await openDb();
-  return new Promise((res, rej) => {
-    const q = db.transaction('kv').objectStore('kv').get(key);
-    q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error);
-  });
-}
-async function kvSet(key, val) {
-  const db = await openDb();
-  return new Promise((res, rej) => {
-    const tx = db.transaction('kv', 'readwrite');
-    tx.objectStore('kv').put(val, key);
-    tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error);
-  });
-}
-
-/* ---------- состояние ---------- */
+/* ---------- утилиты ---------- */
+const $ = s => document.querySelector(s);
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const finePointer = matchMedia('(pointer: fine)').matches;
 const supported = 'showDirectoryPicker' in window;
-const state = {
-  dash: null,
-  root: null,          // FileSystemDirectoryHandle
-  access: 'none',      // none | prompt | granted
-  loading: false,
-  latest: null,        // File
-  error: '',
-  scanId: 0
-};
+const ROOT_KEY = 'root:' + CONFIG.rootPath;
 
-/* Сравнение имён без учёта регистра и способа записи букв (й, ё) */
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 const norm = s => s.normalize('NFC').toLowerCase();
-
-/* "_v0_12.html" → [0, 12]; "_v1.3.html" → [1, 3]; без номера → null */
+const fmtDate = t => new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).format(t);
+function plural(n, one, few, many) {
+  const a = n % 10, b = n % 100;
+  if (a === 1 && b !== 11) return one;
+  if (a >= 2 && a <= 4 && (b < 12 || b > 14)) return few;
+  return many;
+}
+/* " v1.6.5.html" → [1,6,5]; "_v0_12.html" → [0,12] */
 function parseVersion(rest) {
   const m = rest.match(/v?(\d+(?:[._\-]\d+)*)/);
   return m ? m[1].split(/[._\-]/).map(Number) : null;
 }
-/* Сначала сравниваем номер версии, при равенстве или без номера — дату изменения */
 function isNewer(verA, fileA, verB, fileB) {
   if (verA && verB) {
     for (let i = 0; i < Math.max(verA.length, verB.length); i++) {
@@ -174,162 +235,340 @@ function isNewer(verA, fileA, verB, fileB) {
   return fileA.lastModified > fileB.lastModified;
 }
 
-/* Когда путь в настройках меняется, пользователя попросят выбрать папку заново */
-const ROOT_KEY = 'root:' + CONFIG.rootPath;
-
-const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
-const fmtDate = t => new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(t);
-const fmtSize = b => b > 1048576 ? (b / 1048576).toFixed(1).replace('.', ',') + ' МБ' : Math.max(1, Math.round(b / 1024)) + ' КБ';
-
-/* ---------- список дашбордов ---------- */
-function renderList() {
-  document.getElementById('list').innerHTML = CONFIG.dashboards.map(d => `
-    <li><button data-id="${esc(d.id)}" aria-current="${state.dash && state.dash.id === d.id}">
-      ${esc(d.title)}<small>${esc(d.note || '')}</small>
-    </button></li>`).join('');
+/* ---------- запоминание выбранной папки ---------- */
+function openDb() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open('dash-launcher', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('kv');
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
 }
-document.getElementById('list').addEventListener('click', e => {
-  const b = e.target.closest('button[data-id]');
-  if (b) select(b.dataset.id);
+async function kvGet(k) {
+  const db = await openDb();
+  return new Promise((res, rej) => { const q = db.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); });
+}
+async function kvSet(k, v) {
+  const db = await openDb();
+  return new Promise((res, rej) => { const tx = db.transaction('kv', 'readwrite'); tx.objectStore('kv').put(v, k); tx.oncomplete = res; tx.onerror = () => rej(tx.error); });
+}
+
+/* ---------- состояние ---------- */
+const state = { mode: 'work', root: null, access: 'none', loading: false, error: '', results: {}, scanId: 0 };
+
+/* ============================================================
+   ПРИВЕТСТВИЕ
+   ============================================================ */
+let greeting = false, skipGreeting = false;
+const greetAnims = [];
+const wait = ms => new Promise(r => setTimeout(r, skipGreeting ? 0 : ms));
+
+function fillCounts() {
+  const w = CONFIG.modes.work.dashboards.length, c = CONFIG.modes.collect.dashboards.length;
+  document.querySelector('[data-count="work"]').textContent = `${w} ${plural(w, 'дашборд', 'дашборда', 'дашбордов')}`;
+  document.querySelector('[data-count="collect"]').textContent = `${c} ${plural(c, 'файл', 'файла', 'файлов')} для сборки`;
+}
+
+function showGreetingFinal() {
+  greetAnims.forEach(a => a.finish());
+  $('#hiText').style.clipPath = 'inset(0 0 0 0)';
+  $('#beam').style.opacity = '0';
+  $('#askText').textContent = 'Чем хочешь заняться?';
+  document.querySelectorAll('.mode').forEach(m => m.classList.add('in'));
+  $('#helloFoot').classList.add('in');
+}
+
+async function playGreeting() {
+  fillCounts();
+  if (reduced) { showGreetingFinal(); return; }
+  greeting = true;
+  await wait(250);
+
+  const dur = 1000, ease = 'cubic-bezier(.65,0,.35,1)';
+  const reveal = $('#hiText').animate(
+    [{ clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)' }],
+    { duration: dur, easing: ease, fill: 'forwards' });
+  const beam = $('#beam').animate(
+    [{ left: '0%', opacity: 0 }, { left: '4%', opacity: 1, offset: .08 }, { left: '96%', opacity: 1, offset: .9 }, { left: '100%', opacity: 0 }],
+    { duration: dur, easing: ease, fill: 'forwards' });
+  greetAnims.push(reveal, beam);
+  if (skipGreeting) { showGreetingFinal(); greeting = false; return; }
+  await reveal.finished.catch(() => {});
+
+  const text = 'Чем хочешь заняться?';
+  const el = $('#askText');
+  await wait(180);
+  for (let i = 1; i <= text.length; i++) {
+    if (skipGreeting) break;
+    el.textContent = text.slice(0, i);
+    await wait(text[i - 1] === ' ' ? 70 : 42);
+  }
+  el.textContent = text;
+
+  await wait(200);
+  for (const m of document.querySelectorAll('.mode')) { m.classList.add('in'); await wait(140); }
+  $('#helloFoot').classList.add('in');
+  greeting = false;
+}
+
+$('#hello').addEventListener('pointerdown', e => {
+  if (greeting && !e.target.closest('.mode')) { skipGreeting = true; showGreetingFinal(); }
 });
+document.addEventListener('keydown', () => { if (greeting) { skipGreeting = true; showGreetingFinal(); } });
 
-function select(id) {
-  state.dash = CONFIG.dashboards.find(d => d.id === id) || CONFIG.dashboards[0];
-  history.replaceState(null, '', '?d=' + encodeURIComponent(state.dash.id));
-  state.latest = null; state.error = '';
-  renderList();
-  if (state.access === 'granted') scan(); else render();
+/* ============================================================
+   ПЕРЕХОДЫ МЕЖДУ ЭКРАНАМИ
+   ============================================================ */
+function circleAt(x, y) { return Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)); }
+
+async function openMode(mode, x, y) {
+  state.mode = mode;
+  renderApp(true);
+  const app = $('#app');
+  app.hidden = false;
+  app.scrollTop = 0;
+  if (!reduced) {
+    const r = circleAt(x, y);
+    await app.animate(
+      [{ clipPath: `circle(0px at ${x}px ${y}px)` }, { clipPath: `circle(${r}px at ${x}px ${y}px)` }],
+      { duration: 720, easing: 'cubic-bezier(.7,0,.2,1)' }).finished.catch(() => {});
+  }
+  $('#hello').hidden = true;
+  if (state.access === 'granted') scan();
 }
 
-/* ---------- доступ к папке ---------- */
+async function closeMode() {
+  const b = $('#back').getBoundingClientRect();
+  const x = b.left + b.width / 2, y = b.top + b.height / 2;
+  $('#hello').hidden = false;
+  showGreetingFinal();
+  const app = $('#app');
+  if (!reduced) {
+    await app.animate(
+      [{ clipPath: `circle(${circleAt(x, y)}px at ${x}px ${y}px)` }, { clipPath: `circle(0px at ${x}px ${y}px)` }],
+      { duration: 560, easing: 'cubic-bezier(.7,0,.2,1)' }).finished.catch(() => {});
+  }
+  app.hidden = true;
+}
+
+document.querySelectorAll('.mode').forEach(btn => btn.addEventListener('click', e => {
+  let x = e.clientX, y = e.clientY;
+  if (!x && !y) { const r = btn.getBoundingClientRect(); x = r.left + r.width / 2; y = r.top + r.height / 2; }
+  openMode(btn.dataset.mode, x, y);
+}));
+$('#back').addEventListener('click', closeMode);
+document.querySelectorAll('.tabs button').forEach(t => t.addEventListener('click', () => {
+  if (t.dataset.tab === state.mode) return;
+  state.mode = t.dataset.tab; state.error = '';
+  renderApp(true);
+  if (state.access === 'granted') scan();
+}));
+
+/* ============================================================
+   ОТРИСОВКА ЭКРАНА ДАШБОРДОВ
+   ============================================================ */
+const ICON_GO = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>';
+const ICON_DL = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>';
+
+function renderApp(withGrid) {
+  const m = CONFIG.modes[state.mode];
+  document.querySelectorAll('.tabs button').forEach(t => t.setAttribute('aria-selected', t.dataset.tab === state.mode));
+  $('#modeTitle').textContent = m.title;
+  $('#modeDesc').textContent = m.desc;
+  renderFolderState();
+  renderAccess();
+  if (withGrid) renderGrid(); else updateTiles();
+}
+
+function renderFolderState() {
+  const el = $('#folderState');
+  if (state.access === 'granted') el.innerHTML = `<span class="dot ok"></span><span>Папка подключена</span><button class="link" data-act="repick">Сменить</button>`;
+  else if (state.access === 'prompt') el.innerHTML = `<span class="dot"></span><span>Нужно подтвердить доступ</span>`;
+  else el.innerHTML = `<span class="dot"></span><span>Папка не выбрана</span>`;
+}
+
+function renderAccess() {
+  const el = $('#access');
+  if (!supported) {
+    el.innerHTML = `<div class="access error"><h3>Этот браузер не открывает папки с диска</h3><p>Откройте страницу в Google Chrome или Microsoft Edge.</p></div>`;
+    return;
+  }
+  if (state.access === 'granted' && !state.error) { el.innerHTML = ''; return; }
+  if (state.access === 'granted' && state.error) {
+    el.innerHTML = `<div class="access error"><h3>Не получилось найти файлы</h3><p>${esc(state.error)}</p>
+      <button class="btn small" data-act="refresh">Проверить снова</button> <button class="btn ghost small" data-act="repick">Выбрать другую папку</button></div>`;
+    return;
+  }
+  if (state.access === 'prompt') {
+    el.innerHTML = `<div class="access"><h3>Подтвердите доступ к папке</h3>
+      <p>Вы уже выбирали папку раньше. Браузеру нужно одно подтверждение, чтобы снова её открыть.</p>
+      <button class="btn" data-act="connect">Разрешить доступ</button>
+      <p class="fine">Не та папка? <button class="link" data-act="repick">Выбрать заново</button></p></div>`;
+    return;
+  }
+  el.innerHTML = `<div class="access"><h3>Подключите папку с дашбордами</h3>
+    <p>Скопируйте путь, нажмите «Выбрать папку» и вставьте путь в адресную строку открывшегося окна. Это нужно сделать один раз.</p>
+    <div class="path"><code>${esc(CONFIG.rootPath)}</code><button class="btn ghost small" data-act="copy">Копировать путь</button></div>
+    <button class="btn" data-act="connect">Выбрать папку</button>
+    <p class="fine">Браузер спросит, можно ли сайту просматривать файлы в этой папке. Подтвердите, и выбор запомнится для обоих режимов.</p></div>`;
+}
+
+function tileState(d) {
+  const r = (state.results[state.mode] || {})[d.id];
+  if (state.access !== 'granted') return { cls: 'off', meta: '<p class="meta">Подключите папку, чтобы увидеть версию</p>', ready: false };
+  if (state.loading && !r) return { cls: '', meta: '<p class="meta"><span class="skeleton"></span></p>', ready: false };
+  if (!r) return { cls: 'off', meta: `<p class="meta bad">Файл «${esc(d.prefix)}…» не найден</p>`, ready: false };
+  return {
+    cls: 'ready',
+    meta: `<span class="ver">${r.ver ? 'v' + esc(r.ver.join('.')) : 'без версии'}</span><p class="meta">Обновлён ${fmtDate(r.file.lastModified)}</p>`,
+    ready: true
+  };
+}
+
+function tileInner(d) {
+  const s = tileState(d);
+  return {
+    cls: s.cls,
+    html: `
+      <div class="mark">${esc(d.mark || d.title.slice(0, 2))}</div>
+      <h3><button class="open" data-open="${esc(d.id)}" ${s.ready ? '' : 'disabled'}>${esc(d.title)}</button></h3>
+      ${d.desc ? `<p class="meta">${esc(d.desc)}</p>` : ''}
+      ${s.meta}
+      <div class="dash-foot">
+        <span class="go">${s.ready ? 'Открыть ' + ICON_GO : ''}</span>
+        ${s.ready ? `<button class="dl" data-dl="${esc(d.id)}" aria-label="Скачать ${esc(d.title)}" title="Скачать">${ICON_DL}</button>` : ''}
+      </div>`
+  };
+}
+
+function renderGrid() {
+  const grid = $('#grid');
+  grid.innerHTML = CONFIG.modes[state.mode].dashboards.map((d, i) => {
+    const t = tileInner(d);
+    return `<div class="cell" style="--i:${i}"><article class="dash ${t.cls}" data-id="${esc(d.id)}">${t.html}</article></div>`;
+  }).join('');
+  grid.querySelectorAll('.dash').forEach(attachTilt);
+}
+
+function updateTiles() {
+  const byId = Object.fromEntries(CONFIG.modes[state.mode].dashboards.map(d => [d.id, d]));
+  document.querySelectorAll('#grid .dash').forEach(el => {
+    const d = byId[el.dataset.id]; if (!d) return;
+    const t = tileInner(d);
+    el.className = 'dash ' + t.cls;
+    el.innerHTML = t.html;
+  });
+}
+
+/* наклон плитки за курсором и подсветка в точке курсора */
+function attachTilt(el) {
+  if (!finePointer || reduced) return;
+  el.addEventListener('pointermove', e => {
+    if (!el.classList.contains('ready')) return;
+    const b = el.getBoundingClientRect();
+    const px = (e.clientX - b.left) / b.width, py = (e.clientY - b.top) / b.height;
+    el.style.setProperty('--mx', (px * 100) + '%');
+    el.style.setProperty('--my', (py * 100) + '%');
+    el.style.transform = `translateY(-6px) rotateX(${(0.5 - py) * 9}deg) rotateY(${(px - 0.5) * 11}deg)`;
+  });
+  el.addEventListener('pointerleave', () => { el.style.transform = ''; });
+}
+
+/* ============================================================
+   РАБОТА С ПАПКОЙ И ФАЙЛАМИ
+   ============================================================ */
 async function connect(forcePicker) {
   try {
     if (state.root && state.access === 'prompt' && !forcePicker) {
-      const p = await state.root.requestPermission({ mode: 'read' });
-      if (p !== 'granted') return;
+      if ((await state.root.requestPermission({ mode: 'read' })) !== 'granted') return;
     } else {
       state.root = await window.showDirectoryPicker({ id: 'dash-root', mode: 'read' });
       await kvSet(ROOT_KEY, state.root);
+      state.results = {};
     }
-    state.access = 'granted';
+    state.access = 'granted'; state.error = '';
+    renderApp(false);
     scan();
   } catch (e) {
-    if (e.name !== 'AbortError') { state.error = 'Не удалось открыть папку: ' + e.message; render(); }
+    if (e.name !== 'AbortError') { state.error = 'Не удалось открыть папку: ' + e.message; state.access = state.root ? 'granted' : 'none'; renderApp(false); }
   }
 }
 
-/* ---------- поиск свежего файла ---------- */
 async function scan() {
-  const my = ++state.scanId;
-  const d = state.dash;
-  state.loading = true; state.error = ''; render();
-  let latest = null, latestVer = null, error = '';
-  const where = d.folder ? `подпапке «${d.folder}»` : `папке ${CONFIG.rootPath}`;
+  const my = ++state.scanId, modeId = state.mode, m = CONFIG.modes[modeId];
+  state.loading = true; state.error = '';
+  renderAccess(); updateTiles();
+  const found = {};
+  let error = '';
   try {
     let dir = state.root;
-    for (const part of (d.folder || '').split(/[\\/]/).filter(Boolean)) dir = await dir.getDirectoryHandle(part);
-    const pre = norm(d.prefix || '');
+    for (const part of (m.folder || '').split(/[\\/]/).filter(Boolean)) dir = await dir.getDirectoryHandle(part);
+    const prefixes = m.dashboards.map(d => ({ d, p: norm(d.prefix) }));
     for await (const entry of dir.values()) {
       if (entry.kind !== 'file') continue;
       const n = norm(entry.name);
       if (!/\.html?$/.test(n) || n.startsWith('~$')) continue;
-      if (pre && !n.startsWith(pre)) continue;
-      const f = await entry.getFile();
-      const ver = parseVersion(n.slice(pre.length));
-      if (!latest || isNewer(ver, f, latestVer, latest)) { latest = f; latestVer = ver; }
+      const hit = prefixes.find(x => n.startsWith(x.p));
+      if (!hit) continue;
+      const file = await entry.getFile();
+      const ver = parseVersion(n.slice(hit.p.length));
+      const cur = found[hit.d.id];
+      if (!cur || isNewer(ver, file, cur.ver, cur.file)) found[hit.d.id] = { file, ver };
     }
-    if (!latest) error = `В ${where} нет файлов, название которых начинается с «${d.prefix}» и заканчивается на .html. Проверьте, что выбрана папка ${CONFIG.rootPath}.`;
   } catch (e) {
-    if (e.name === 'NotFoundError') error = `В выбранной папке нет подпапки «${d.folder}». Проверьте, что выбрана папка ${CONFIG.rootPath}.`;
-    else if (e.name === 'NotAllowedError') { state.access = 'prompt'; }
+    if (e.name === 'NotFoundError') error = `В выбранной папке нет подпапки «${m.folder}». Проверьте, что выбрана папка ${CONFIG.rootPath}.`;
+    else if (e.name === 'NotAllowedError') state.access = 'prompt';
     else error = 'Не удалось прочитать папку: ' + e.message;
   }
-  if (my !== state.scanId) return;           // пользователь уже переключился на другой дашборд
-  state.loading = false; state.latest = latest; state.error = error;
-  render();
+  if (my !== state.scanId) return;
+  state.loading = false;
+  state.results[modeId] = found;
+  if (!error && state.access === 'granted' && Object.keys(found).length === 0)
+    error = `В папке не нашлось ни одного файла этого режима. Проверьте, что выбрана папка ${CONFIG.rootPath}.`;
+  state.error = error;
+  renderApp(false);
 }
 
-/* ---------- действия с файлом ---------- */
-function openLatest() {
-  const url = URL.createObjectURL(state.latest);
+function resultFor(id) { return (state.results[state.mode] || {})[id]; }
+
+function openFile(id) {
+  const r = resultFor(id); if (!r) return;
+  const url = URL.createObjectURL(r.file);
   const w = window.open(url, '_blank');
   if (!w) location.href = url;
 }
-function downloadLatest() {
-  const url = URL.createObjectURL(state.latest);
+function downloadFile(id) {
+  const r = resultFor(id); if (!r) return;
+  const url = URL.createObjectURL(r.file);
   const a = document.createElement('a');
-  a.href = url; a.download = state.latest.name;
+  a.href = url; a.download = r.file.name;
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 10000);
 }
 
-/* ---------- карточка дашборда ---------- */
-function render() {
-  const d = state.dash, el = document.getElementById('detail');
-  const granted = state.access === 'granted';
-
-  let step1;
-  if (granted) {
-    step1 = `<p>Папка подключена: <b>${esc(state.root.name)}</b>. <button class="link" data-act="repick">Выбрать другую</button></p>`;
-  } else if (state.access === 'prompt') {
-    step1 = `<p>Вы уже выбирали папку раньше — браузеру нужно одно подтверждение.</p>
-      <button class="btn" data-act="connect" ${supported ? '' : 'disabled'}>Разрешить доступ</button>
-      <p class="fine">Не та папка? <button class="link" data-act="repick">Выбрать заново</button></p>`;
-  } else {
-    step1 = `<p>Скопируйте путь, нажмите «Выбрать папку» и вставьте путь в адресную строку открывшегося окна.</p>
-      <div class="path"><code>${esc(CONFIG.rootPath)}</code><button class="btn ghost small" data-act="copy">Копировать путь</button></div>
-      <button class="btn" data-act="connect" ${supported ? '' : 'disabled'}>Выбрать папку</button>
-      <p class="fine">Браузер спросит, можно ли сайту просматривать файлы в этой папке, — подтвердите. Выбор запомнится для всех дашбордов.</p>`;
-  }
-
-  let step2;
-  if (!granted) step2 = `<p class="muted">Появится после подключения папки.</p>`;
-  else if (state.loading) step2 = `<p class="muted">Ищу последний файл…</p>`;
-  else if (state.error) step2 = `<p class="err">${esc(state.error)}</p><button class="link" data-act="refresh">Проверить снова</button>`;
-  else if (state.latest) step2 = `
-      <div class="file">
-        <div class="fname">${esc(state.latest.name)}</div>
-        <div class="meta">Обновлён ${fmtDate(state.latest.lastModified)}, ${fmtSize(state.latest.size)}</div>
-      </div>
-      <div class="actions">
-        <button class="btn" data-act="open">Открыть</button>
-        <button class="btn ghost" data-act="download">Скачать</button>
-        <button class="link" data-act="refresh">Проверить снова</button>
-      </div>`;
-  else step2 = '';
-
-  el.innerHTML = `
-    <h2>${esc(d.title)}</h2>
-    <p class="note">${esc(d.note || '')}</p>
-    <ol class="steps">
-      <li class="step ${granted ? 'done' : ''}"><h3>Доступ к папке с дашбордами</h3>${step1}</li>
-      <li class="step ${state.latest && granted ? 'done' : ''}"><h3>Последняя версия</h3>${step2}</li>
-    </ol>`;
-}
-
-document.getElementById('detail').addEventListener('click', async e => {
-  const b = e.target.closest('[data-act]'); if (!b) return;
-  const act = b.dataset.act;
-  if (act === 'connect') connect(false);
-  if (act === 'repick') connect(true);
-  if (act === 'refresh') scan();
-  if (act === 'open') openLatest();
-  if (act === 'download') downloadLatest();
-  if (act === 'copy') {
-    try { await navigator.clipboard.writeText(CONFIG.rootPath); b.textContent = 'Скопировано'; }
-    catch { b.textContent = 'Выделите путь вручную'; }
-    setTimeout(() => { b.textContent = 'Копировать путь'; }, 2000);
+document.getElementById('app').addEventListener('click', async e => {
+  const open = e.target.closest('[data-open]');
+  if (open && !open.disabled) { openFile(open.dataset.open); return; }
+  const dl = e.target.closest('[data-dl]');
+  if (dl) { downloadFile(dl.dataset.dl); return; }
+  const act = e.target.closest('[data-act]'); if (!act) return;
+  const a = act.dataset.act;
+  if (a === 'connect') connect(false);
+  if (a === 'repick') connect(true);
+  if (a === 'refresh') scan();
+  if (a === 'copy') {
+    try { await navigator.clipboard.writeText(CONFIG.rootPath); act.textContent = 'Скопировано'; }
+    catch { act.textContent = 'Выделите путь вручную'; }
+    setTimeout(() => { act.textContent = 'Копировать путь'; }, 2000);
   }
 });
 
-/* если кураторы положили новый файл, пока вкладка была в фоне */
+/* кураторы могли положить новую версию, пока вкладка была в фоне */
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && state.access === 'granted' && !state.loading) scan();
+  if (document.visibilityState === 'visible' && !$('#app').hidden && state.access === 'granted' && !state.loading) scan();
 });
 
 /* ---------- запуск ---------- */
 (async function init() {
-  if (!supported) document.getElementById('unsupported').hidden = false;
   if (supported) {
     try {
       const saved = await kvGet(ROOT_KEY);
@@ -337,10 +576,9 @@ document.addEventListener('visibilitychange', () => {
         state.root = saved;
         state.access = (await saved.queryPermission({ mode: 'read' })) === 'granted' ? 'granted' : 'prompt';
       }
-    } catch { /* нет сохранённой папки — начнём с выбора */ }
+    } catch { /* сохранённой папки нет */ }
   }
-  const id = new URLSearchParams(location.search).get('d');
-  select(id);
+  playGreeting();
 })();
 </script>
 </body>
