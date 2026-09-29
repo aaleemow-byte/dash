@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#1B2227">
-<title>Отработка задач</title>
+<title>ЦС HUB</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii0xMCAwIDEzMy41IDEzMy43NSI+PHN0eWxlPi5pe2ZpbGw6IzIxMjgyQn1AbWVkaWEgKHByZWZlcnMtY29sb3Itc2NoZW1lOiBkYXJrKXsuaXtmaWxsOiNGRkZGRkZ9fTwvc3R5bGU+PHBhdGggZmlsbD0iI0ZCQzMxMSIgZD0iTTAgNTYuNzVMNTYuNzUgMEwxMTMuNSA1Ni43NUg4Ny4zTDU2Ljc1IDI2LjJMMjYuMiA1Ni43NVoiLz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwIDY1Ljc1KSI+PHBhdGggY2xhc3M9ImkiIGQ9Ik0wIDBIMTguNVYzNS41SDM3VjBINTUuNVY2OEw0MS41IDU0SDBaIi8+PHBhdGggY2xhc3M9ImkiIGQ9Ik0xMTMuNSAwSDkwLjVBMjcgMjcgMCAwIDAgOTAuNSA1NEgxMTMuNVYzNS41SDkwLjVBOC41IDguNSAwIDAgMSA5MC41IDE4LjVIMTEzLjVaIi8+PC9nPjwvc3ZnPg==">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -63,7 +63,15 @@
   .tabs { display: flex; padding: 3px; border-radius: 9px; background: #2A343A; }
   .tabs button { border: 0; background: none; color: #C3CCD1; font-weight: 600; padding: 7px 16px; border-radius: 7px; cursor: pointer; transition: background .2s, color .2s; }
   .tabs button[aria-selected="true"] { background: var(--amber); color: var(--night); }
-  .folder { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: .9rem; color: #AEB8BE; }
+  /* кнопка копирования пути: иконка не крупнее буквы «Ц» в логотипе шапки (~15 px),
+     кликабельная зона шире за счёт отступов */
+  .pathcopy { margin-left: auto; display: inline-flex; align-items: center; gap: 7px; padding: 6px 8px; border: 0; border-radius: 6px;
+              background: none; color: #AEB8BE; font-size: 13px; line-height: 1; cursor: pointer; transition: color .2s, background .2s; }
+  .pathcopy svg { width: 14px; height: 14px; flex: none; color: var(--amber); }
+  .pathcopy:hover { color: #fff; background: rgba(255,255,255,.06); }
+  .pathcopy.done { color: var(--ok); }
+  .pathcopy.done svg { color: var(--ok); }
+  .folder { display: flex; align-items: center; gap: 10px; font-size: .9rem; color: #AEB8BE; }
   .dot { width: 8px; height: 8px; border-radius: 50%; background: #6B767D; }
   .dot.ok { background: var(--ok); }
   .folder .link { color: var(--amber); }
@@ -147,16 +155,29 @@
   .cs-ink { fill: var(--cs-ink, #21282B); }
   .hello, .bar { --cs-ink: #FFFFFF; }
   .foot { --cs-ink: #21282B; }
-  .cs-logo { display: block; height: clamp(110px, 17vh, 150px); width: auto; margin: 0 0 30px; overflow: visible; }
+  .cs-logo { display: block; overflow: visible; }
   .cs-static-g { display: none; }
   /* Логотип и надпись стоят на одной линии: низ надписи совпадает с низом «С»,
      а высота заглавных букв совпадает с высотой букв «ЦС» */
   .cs-mini { display: block; height: 36px; width: auto; flex: none; }
   .brand-wrap { display: flex; align-items: flex-end; gap: 12px; }
   .brand-wrap .brand { padding-bottom: 1px; }
-  .foot { display: flex; align-items: flex-end; gap: 10px; margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--ink); }
-  .foot .cs-mini { height: 28px; }
-  .foot span { font-size: 15px; font-weight: 800; line-height: 1; letter-spacing: -0.015em; padding-bottom: 1px; }
+  /* ---------- ЦС + плашка HUB ----------
+     --lh — высота монограммы; плашка по высоте равна буквам «ЦС»
+     и стоит на одной линии с низом «С» */
+  .lockup { --lh: 40px; display: flex; align-items: flex-end; }
+  .lockup > svg { height: var(--lh); width: auto; flex: none; }
+  .hub { flex: none; display: flex; align-items: center;
+         height: calc(var(--lh) * .404); margin: 0 0 calc(var(--lh) * .1065) calc(var(--lh) * .075);
+         padding: 0 calc(var(--lh) * .1); border-radius: calc(var(--lh) * .08);
+         background: #FBC311; color: #1B2227; font-weight: 800; font-size: calc(var(--lh) * .35);
+         line-height: 1; letter-spacing: -0.01em; transform-origin: 50% 60%; }
+  .hello-logo { --lh: clamp(110px, 17vh, 150px); margin: 0 0 30px; }
+  .hello-logo .hub { opacity: 0; box-shadow: 0 10px 30px -10px rgba(251,195,17,.45); }
+  .hello-logo .hub.in { opacity: 1; }
+  .foot { display: flex; align-items: flex-end; gap: 16px; margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--muted); }
+  .foot .lockup { --lh: 40px; }
+  .foot-name { font-size: 14px; line-height: 1; padding-bottom: calc(40px * .1065); padding-left: 16px; border-left: 1px solid var(--line); }
   @media (prefers-reduced-motion: reduce) { .cs-anim-g { display: none; } .cs-static-g { display: inline; } }
 
   @media (prefers-reduced-motion: reduce) {
@@ -169,7 +190,7 @@
 <section id="hello" class="hello">
   <div class="bg" id="bg" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><canvas id="dots"></canvas></div>
   <div class="hello-inner">
-    <svg id="csLogo" class="cs-logo" viewBox="0 0 113.5 133.75" role="img" aria-label="ЦС">
+    <div class="lockup hello-logo"><svg id="csLogo" class="cs-logo" viewBox="0 0 113.5 133.75" role="img" aria-label="ЦС">
   <defs>
     <path id="csl-body-shape" d="M0 56.75H34.2V97.3H78.9V56.75H113.3V126.7L113.3 126.7H0Z"><animate attributeName="d" from="M0 56.75H34.2V97.3H78.9V56.75H113.3V126.7L113.3 126.7H0Z" to="M0 65.75H18.5V101.25H37V65.75H55.5V133.75L41.5 119.75H0Z" begin="1.4s" dur="0.7s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1"/></path>
   </defs>
@@ -196,7 +217,7 @@
     </g></g></g>
   </g>
   <g id="csl-cs-static" class="cs-static-g"><path class="cs-y" d="M0 56.75L56.75 0L113.5 56.75H87.3L56.75 26.2L26.2 56.75Z"/><g transform="translate(0 65.75)"><path class="cs-ink" d="M0 0H18.5V35.5H37V0H55.5V68L41.5 54H0Z"/><path class="cs-ink" d="M113.5 0H90.5A27 27 0 0 0 90.5 54H113.5V35.5H90.5A8.5 8.5 0 0 1 90.5 18.5H113.5Z"/></g></g>
-</svg>
+</svg><span class="hub" id="hub">HUB</span></div>
     <h1 class="hi" aria-label="Привет, коллега!"><span class="hi-text" id="hiText">Привет, коллега!</span><span class="beam" id="beam" aria-hidden="true"></span></h1>
     <p class="ask" aria-label="Чем хочешь заняться?"><span id="askText" aria-hidden="true"></span><span class="caret" aria-hidden="true"></span></p>
 
@@ -226,13 +247,17 @@
       <button role="tab" data-tab="work">Отработать</button>
       <button role="tab" data-tab="collect">Собрать</button>
     </div>
+    <button class="pathcopy" id="pathCopy" title="">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+      <span id="pathCopyText">тык, чтобы скопировать путь</span>
+    </button>
     <div class="folder" id="folderState"></div>
   </header>
   <main class="page">
     <div class="mode-head"><h2 id="modeTitle"></h2><p id="modeDesc"></p></div>
     <div id="access"></div>
     <div class="grid" id="grid"></div>
-    <footer class="foot"><svg class="cs-mini" viewBox="0 0 113.5 133.75" aria-hidden="true"><path class="cs-y" d="M0 56.75L56.75 0L113.5 56.75H87.3L56.75 26.2L26.2 56.75Z"/><g transform="translate(0 65.75)"><path class="cs-ink" d="M0 0H18.5V35.5H37V0H55.5V68L41.5 54H0Z"/><path class="cs-ink" d="M113.5 0H90.5A27 27 0 0 0 90.5 54H113.5V35.5H90.5A8.5 8.5 0 0 1 90.5 18.5H113.5Z"/></g></svg><span>Центр снабжения</span></footer>
+    <footer class="foot"><div class="lockup"><svg class="cs-mini" viewBox="0 0 113.5 133.75" aria-hidden="true"><path class="cs-y" d="M0 56.75L56.75 0L113.5 56.75H87.3L56.75 26.2L26.2 56.75Z"/><g transform="translate(0 65.75)"><path class="cs-ink" d="M0 0H18.5V35.5H37V0H55.5V68L41.5 54H0Z"/><path class="cs-ink" d="M113.5 0H90.5A27 27 0 0 0 90.5 54H113.5V35.5H90.5A8.5 8.5 0 0 1 90.5 18.5H113.5Z"/></g></svg><span class="hub">HUB</span></div><span class="foot-name">Центр снабжения</span></footer>
   </main>
 </section>
 
@@ -256,7 +281,8 @@ const CONFIG = {
         { id: 'bs-mtz',      title: 'BS-МТЗ',         mark: 'BS', prefix: 'BS-МТЗ',         desc: '' },
         { id: 'novinki',     title: 'Новинки',        mark: 'Нв', prefix: 'Новинки',        desc: '' },
         { id: 'puto',        title: 'Отработка ПУТО', mark: 'ПТ', prefix: 'Отработка_ПУТО', desc: '' },
-        { id: 'proekty-mtz', title: 'Проекты-МТЗ',    mark: 'Пр', prefix: 'Проекты-МТЗ',    desc: '' }
+        { id: 'proekty-mtz', title: 'Проекты-МТЗ',    mark: 'Пр', prefix: 'Проекты-МТЗ',    desc: '' },
+        { id: 'korr-mtz',    title: 'Корректировки-МТЗ', mark: 'Кр', prefix: 'Корректировки-МТЗ', desc: '' }
       ]
     },
     collect: {
@@ -266,7 +292,8 @@ const CONFIG = {
       dashboards: [
         { id: 'bs-analyst',      title: 'BS-аналитик',      mark: 'BS', prefix: 'BS-аналитик',      desc: '' },
         { id: 'proekty-analyst', title: 'Проекты-Аналитик', mark: 'Пр', prefix: 'Проекты-Аналитик', desc: '' },
-        { id: 'puto-curator',    title: 'ПУТО куратор',     mark: 'ПТ', prefix: 'ПУТО_куратор',     desc: '' }
+        { id: 'puto-curator',    title: 'ПУТО куратор',     mark: 'ПТ', prefix: 'ПУТО_куратор',     desc: '' },
+        { id: 'korr-analyst',    title: 'Корректировки-Аналитик', mark: 'Кр', prefix: 'Корректировки-Аналитик', desc: '' }
       ]
     }
   }
@@ -331,6 +358,32 @@ let greeting = false, skipGreeting = false;
 const csLogo = document.getElementById('csLogo');
 const LOGO_END = 3.0;   // анимация логотипа длится 2,8 с
 if (csLogo.pauseAnimations) csLogo.pauseAnimations();
+const hub = document.getElementById('hub');
+let hubTimer = null, hubAnim = null, hubColorAnim = null;
+const HUB_ORANGE = '#FF9000', HUB_YELLOW = '#FBC311';
+/* плашка влетает повёрнутой, перекручивается с перелётом и садится ровно */
+function playHub() {
+  hub.classList.add('in');
+  if (reduced) return;
+  hubAnim = hub.animate([
+    { transform: 'translate(45%, 40%) rotate(55deg) scale(.3)', opacity: 0 },
+    { opacity: 1, offset: .2 },
+    { transform: 'translate(0, -6%) rotate(-8deg) scale(1.15)', offset: .6, easing: 'ease-in-out' },
+    { transform: 'rotate(3deg) scale(.96)', offset: .82 },
+    { transform: 'none', opacity: 1 }
+  ], { duration: 760, easing: 'cubic-bezier(.25,.8,.3,1)', fill: 'backwards' });
+
+  /* влетает оранжевой, через паузу дважды мигает и остаётся жёлтой */
+  const glowO = '0 10px 30px -10px rgba(255,144,0,.55)', glowY = '0 10px 30px -10px rgba(251,195,17,.45)';
+  const step = 'steps(1, end)';
+  hubColorAnim = hub.animate([
+    { backgroundColor: HUB_ORANGE, boxShadow: glowO, easing: step },
+    { backgroundColor: HUB_YELLOW, boxShadow: glowY, offset: .22, easing: step },
+    { backgroundColor: HUB_ORANGE, boxShadow: glowO, offset: .44, easing: step },
+    { backgroundColor: HUB_YELLOW, boxShadow: glowY, offset: .66, easing: step },
+    { backgroundColor: HUB_YELLOW, boxShadow: glowY }
+  ], { duration: 420, delay: 760 + 450, fill: 'backwards' });
+}
 function logoAt(t) { if (!csLogo.setCurrentTime) return; csLogo.setCurrentTime(t); csLogo.unpauseAnimations(); }
 const greetAnims = [];
 const wait = ms => new Promise(r => setTimeout(r, skipGreeting ? 0 : ms));
@@ -343,6 +396,10 @@ function fillCounts() {
 
 function showGreetingFinal() {
   greetAnims.forEach(a => a.finish());
+  clearTimeout(hubTimer);
+  if (hubAnim) hubAnim.finish();
+  if (hubColorAnim) hubColorAnim.finish();
+  hub.classList.add('in');
   Dots.show();
   logoAt(LOGO_END);
   $('#hiText').style.clipPath = 'inset(0 0 0 0)';
@@ -357,6 +414,7 @@ async function playGreeting() {
   if (reduced) { showGreetingFinal(); return; }
   greeting = true;
   logoAt(0);
+  hubTimer = setTimeout(playHub, 2800);   // как только «С» встала на место
   Dots.show();
   await wait(1350);   // приветствие начинает проявляться, когда из логотипа собирается ЦС
 
@@ -703,6 +761,20 @@ document.getElementById('app').addEventListener('click', async e => {
     setTimeout(() => { act.textContent = 'Копировать путь'; }, 2000);
   }
 });
+
+/* копирование пути из шапки */
+(() => {
+  const btn = document.getElementById('pathCopy'), txt = document.getElementById('pathCopyText');
+  const idle = 'тык, чтобы скопировать путь';
+  btn.title = CONFIG.rootPath;
+  let t;
+  btn.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(CONFIG.rootPath); txt.textContent = 'путь скопирован'; btn.classList.add('done'); }
+    catch { txt.textContent = CONFIG.rootPath; }
+    clearTimeout(t);
+    t = setTimeout(() => { txt.textContent = idle; btn.classList.remove('done'); }, 2200);
+  });
+})();
 
 /* кураторы могли положить новую версию, пока вкладка была в фоне */
 document.addEventListener('visibilitychange', () => {
