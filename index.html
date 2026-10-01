@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#1B2227">
 <title>ЦС HUB</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii0xMCAwIDEzMy41IDEzMy43NSI+PHN0eWxlPi5pe2ZpbGw6IzIxMjgyQn1AbWVkaWEgKHByZWZlcnMtY29sb3Itc2NoZW1lOiBkYXJrKXsuaXtmaWxsOiNGRkZGRkZ9fTwvc3R5bGU+PHBhdGggZmlsbD0iI0ZCQzMxMSIgZD0iTTAgNTYuNzVMNTYuNzUgMEwxMTMuNSA1Ni43NUg4Ny4zTDU2Ljc1IDI2LjJMMjYuMiA1Ni43NVoiLz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwIDY1Ljc1KSI+PHBhdGggY2xhc3M9ImkiIGQ9Ik0wIDBIMTguNVYzNS41SDM3VjBINTUuNVY2OEw0MS41IDU0SDBaIi8+PHBhdGggY2xhc3M9ImkiIGQ9Ik0xMTMuNSAwSDkwLjVBMjcgMjcgMCAwIDAgOTAuNSA1NEgxMTMuNVYzNS41SDkwLjVBOC41IDguNSAwIDAgMSA5MC41IDE4LjVIMTEzLjVaIi8+PC9nPjwvc3ZnPg==">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii0xNi44IDAgMTQ2LjggMTQ2LjgiPjxzdHlsZT4uaXtmaWxsOiMyMTI4MkJ9QG1lZGlhIChwcmVmZXJzLWNvbG9yLXNjaGVtZTogZGFyayl7Lml7ZmlsbDojRkZGRkZGfX08L3N0eWxlPjxwYXRoIGZpbGw9IiNGQkMzMTEiIHRyYW5zZm9ybT0ic2NhbGUoMC44NjQzMDQpIHRyYW5zbGF0ZSgtMTIyLjMgMCkiIGQ9Ik0xMjIuMDQgODAuNzVWNjQuN0wxODcuNyAwTDI1My40IDY0LjdWODAuNzVIMjEzLjU4TDE4Ny41NSA1NS4wNUwxNjEuODQgODAuNzVaIi8+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCA3OC44KSI+PHBhdGggY2xhc3M9ImkiIGQ9Ik0wIDBIMTguNVYzNS41SDM3VjBINTUuNVY2OEw0MS41IDU0SDBaIi8+PHBhdGggY2xhc3M9ImkiIGQ9Ik0xMTMuNSAwSDkwLjVBMjcgMjcgMCAwIDAgOTAuNSA1NEgxMTMuNVYzNS41SDkwLjVBOC41IDguNSAwIDAgMSA5MC41IDE4LjVIMTEzLjVaIi8+PC9nPjwvc3ZnPg==">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -159,25 +159,49 @@
   .cs-static-g { display: none; }
   /* Логотип и надпись стоят на одной линии: низ надписи совпадает с низом «С»,
      а высота заглавных букв совпадает с высотой букв «ЦС» */
-  .cs-mini { display: block; height: 36px; width: auto; flex: none; }
+  .cs-mini { display: block; height: 40px; width: auto; flex: none; }
   .brand-wrap { display: flex; align-items: flex-end; gap: 12px; }
   .brand-wrap .brand { padding-bottom: 1px; }
+  /* ---------- прыгающая кровля ----------
+     roof-idle — периодический прыжок (раз в 7 с), roof-hop — прыжок при наведении */
+  .roof-idle, .roof-hop { transform-box: fill-box; transform-origin: 50% 100%; }
+  .alive .roof-idle { animation: roofIdle 7s ease-in-out 2s infinite; }
+  .roof-hop.hop { animation: roofHop .7s ease-out; }
+  @keyframes roofHop {
+    0%   { transform: none; }
+    15%  { transform: scale(1.05, .9); }
+    42%  { transform: translateY(-11px) scale(.97, 1.04); }
+    64%  { transform: translateY(0) scale(1.04, .93); }
+    80%  { transform: translateY(-3px); }
+    100% { transform: none; }
+  }
+  @keyframes roofIdle {
+    0%    { transform: none; }
+    1.5%  { transform: scale(1.05, .9); }
+    4.2%  { transform: translateY(-11px) scale(.97, 1.04); }
+    6.4%  { transform: translateY(0) scale(1.04, .93); }
+    8%    { transform: translateY(-3px); }
+    10%, 100% { transform: none; }
+  }
+  .hello-logo.alive, .brand-wrap, .foot .lockup { cursor: default; }
+  @media (prefers-reduced-motion: reduce) { .alive .roof-idle, .roof-hop.hop { animation: none; } }
+
   /* ---------- ЦС + плашка HUB ----------
      --lh — высота монограммы; плашка по высоте равна буквам «ЦС»
      и стоит на одной линии с низом «С» */
   .lockup { --lh: 40px; display: flex; align-items: flex-end; }
   .lockup > svg { height: var(--lh); width: auto; flex: none; }
   .hub { flex: none; display: flex; align-items: center;
-         height: calc(var(--lh) * .404); margin: 0 0 calc(var(--lh) * .1065) calc(var(--lh) * .075);
-         padding: 0 calc(var(--lh) * .1); border-radius: calc(var(--lh) * .08);
-         background: #FBC311; color: #1B2227; font-weight: 800; font-size: calc(var(--lh) * .35);
+         height: calc(var(--lh) * .368); margin: 0 0 calc(var(--lh) * .0954) calc(var(--lh) * .068);
+         padding: 0 calc(var(--lh) * .091); border-radius: calc(var(--lh) * .073);
+         background: #FBC311; color: #1B2227; font-weight: 800; font-size: calc(var(--lh) * .319);
          line-height: 1; letter-spacing: -0.01em; transform-origin: 50% 60%; }
   .hello-logo { --lh: clamp(110px, 17vh, 150px); margin: 0 0 30px; }
   .hello-logo .hub { opacity: 0; box-shadow: 0 10px 30px -10px rgba(251,195,17,.45); }
   .hello-logo .hub.in { opacity: 1; }
   .foot { display: flex; align-items: flex-end; gap: 16px; margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--muted); }
   .foot .lockup { --lh: 40px; }
-  .foot-name { font-size: 14px; line-height: 1; padding-bottom: calc(40px * .1065); padding-left: 16px; border-left: 1px solid var(--line); }
+  .foot-name { font-size: 14px; line-height: 1; padding-bottom: calc(40px * .0954); padding-left: 16px; border-left: 1px solid var(--line); }
   @media (prefers-reduced-motion: reduce) { .cs-anim-g { display: none; } .cs-static-g { display: inline; } }
 
   @media (prefers-reduced-motion: reduce) {
@@ -190,33 +214,28 @@
 <section id="hello" class="hello">
   <div class="bg" id="bg" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><canvas id="dots"></canvas></div>
   <div class="hello-inner">
-    <div class="lockup hello-logo"><svg id="csLogo" class="cs-logo" viewBox="0 0 113.5 133.75" role="img" aria-label="ЦС">
+    <div class="lockup hello-logo"><svg id="csLogo" class="cs-logo" viewBox="-0.3 0 113.8 146.8" role="img" aria-label="ЦС">
   <defs>
-    <path id="csl-body-shape" d="M0 56.75H34.2V97.3H78.9V56.75H113.3V126.7L113.3 126.7H0Z"><animate attributeName="d" from="M0 56.75H34.2V97.3H78.9V56.75H113.3V126.7L113.3 126.7H0Z" to="M0 65.75H18.5V101.25H37V65.75H55.5V133.75L41.5 119.75H0Z" begin="1.4s" dur="0.7s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1"/></path>
+    <path id="csl-body-shape" d="M-0.225 69.793L34.175 69.793L34.175 69.793L34.175 97.286L78.894 97.286L78.894 69.793L78.894 69.793L113.293 69.793L113.293 126.707L113.293 126.707L-0.225 126.707Z"><animate attributeName="d" from="M-0.225 69.793L34.175 69.793L34.175 69.793L34.175 97.286L78.894 97.286L78.894 69.793L78.894 69.793L113.293 69.793L113.293 126.707L113.293 126.707L-0.225 126.707Z" to="M0 78.8L18.5 78.8L18.5 78.8L18.5 114.3L37 114.3L37 78.8L37 78.8L55.5 78.8L55.5 146.8L41.5 132.8L0 132.8Z" begin="1.05s" dur="0.75s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1"/></path>
   </defs>
   <g id="csl-cs-animated" class="cs-anim-g">
-    <g id="csl-cam-a" transform="translate(56.75 66.875)"><animateTransform attributeName="transform" type="translate" from="56.75 66.875" to="0 0" begin="0.5s" dur="1.0s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1"/>
-    <g id="csl-cam-b" transform="scale(0.32)"><animateTransform attributeName="transform" type="scale" from="0.32" to="1" begin="0.5s" dur="1.0s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1"/>
-    <g id="csl-cam-c" transform="translate(-56.55 -129.65)"><animateTransform attributeName="transform" type="translate" from="-56.55 -129.65" to="0 0" begin="0.5s" dur="1.0s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1"/>
-      <g id="csl-lemana-pro-logo" transform="scale(0.864304) translate(-122.3 0)">
-        <g id="csl-sign" opacity="1"><animate attributeName="opacity" from="1" to="0" begin="1.0s" dur="0.3s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0 0 1 1"/><path class="cs-o" d="M215.756 27.6348L192.903 60.3822L213.581 80.7534V112.561H169.273L161.841 146.605H253.376V64.6951L215.756 27.6348Z"/><path class="cs-y" d="M187.708 0L122.04 64.6996V146.602H161.841V112.559V80.751L187.708 55.2648L215.756 27.6324L187.708 0Z"/><path class="cs-b" d="M187.707 55.2671L215.755 27.6348L192.902 60.3822L187.707 55.2671Z"/><path class="cs-b" d="M161.841 112.564V146.608L169.273 112.564H161.841Z"/></g>
-        <g id="csl-wordmark" transform="translate(0 0)" opacity="1"><animateTransform attributeName="transform" type="translate" from="0 0" to="0 40" begin="0.3s" dur="0.6s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1"/><animate attributeName="opacity" from="1" to="0" begin="0.3s" dur="0.6s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1"/>
-          <path class="cs-ink" d="M314.818 174.335V228.531H296.06V208.317H278.059V228.531H259.293V174.335H278.059V193.013H296.06V174.335H314.818ZM10.7417 174.335L10.0329 195.701C9.9366 199.115 9.70265 202.235 9.3517 204.978C9.00076 207.652 8.36767 209.791 7.44558 211.341C6.30328 213.247 4.41094 213.864 1.65155 213.274L3.05176e-05 212.925V228.4L0.467994 228.524C1.91306 228.887 3.30308 229.134 4.59676 229.298C5.87668 229.449 7.11527 229.525 8.25756 229.525C12.0216 229.525 15.1664 228.661 17.5748 226.981C19.9764 225.301 21.8481 223.175 23.1624 220.063C24.4561 217.004 25.3713 213.322 25.908 209.099C26.4448 204.909 26.7957 200.185 26.9471 195.063L27.1123 189.468H38.143V228.531H57.0458V174.342H10.7486L10.7417 174.335ZM84.0617 213.871V207.673H109.44V194.425H84.0617V188.988H112.557V174.335H65.269V228.517H113.548V213.864H84.0686L84.0617 213.871ZM171.598 174.335L155.359 192.478L139.119 174.335H119.301V228.517H138.087V202.88H138.21L138.266 202.935L155.31 219.61L172.569 202.708L172.589 202.743V202.969L172.644 228.524H191.41V174.342H171.612L171.598 174.335ZM321.115 199.952V228.524H339.006V199.952C339.006 194.94 343.197 190.853 348.22 190.853C353.264 190.853 357.365 194.94 357.365 199.952V210.566H339.213L356.98 228.524H375.415V199.952C375.415 185.025 363.201 172.889 348.22 172.889C333.26 172.889 321.115 185.025 321.115 199.952ZM224.901 172.889C209.92 172.889 197.706 185.025 197.706 199.952V228.524H216.141L233.908 210.566H215.756V199.952C215.756 194.94 219.857 190.853 224.901 190.853C229.945 190.853 234.115 194.94 234.115 199.952V228.524H252.006V199.952C252.006 185.025 239.861 172.889 224.901 172.889Z"/><path class="cs-y" d="M190.42 243.37H162.943L181.185 261.279H190.42C193.021 261.279 195.14 263.391 195.14 265.983C195.14 268.575 193.021 270.68 190.42 270.68H181.185V261.279H163.246V297.147H181.185V288.555H190.42C202.916 288.555 213.08 278.428 213.08 265.983C213.08 253.538 202.916 243.37 190.42 243.37ZM246.936 242.17C230.937 242.17 217.917 255.143 217.917 271.084C217.917 287.026 230.937 299.999 246.936 299.999C262.935 299.999 275.954 287.026 275.954 271.084C275.954 255.143 262.935 242.17 246.936 242.17ZM246.936 282.117C240.818 282.117 235.864 277.16 235.864 271.084C235.864 265.009 240.825 260.052 246.936 260.052C253.046 260.052 258.008 265.009 258.008 271.084C258.008 277.16 253.046 282.117 246.936 282.117ZM153.674 243.37V297.147H135.748V258.434H117.396V297.147H99.4699V243.37H153.674Z"/>
-        </g>
+    <g><g><g>
+      <g id="csl-base" opacity="0"><animate attributeName="opacity" from="0" to="1" begin="0.50s" dur="0.01s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0 0 1 1"/>
+        <g class="roof-idle"><g class="roof-hop"><path class="cs-y" transform="scale(0.864304) translate(-122.3 0)" d="M122.04 80.75V64.7L187.7 0L253.4 64.7V80.75H213.58L187.55 55.05L161.84 80.75Z"/></g></g>
+        <use id="csl-body-yellow" href="#csl-body-shape" class="cs-y" opacity="1"><animate attributeName="opacity" from="1" to="0" begin="1.80s" dur="0.2s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0 0 1 1"/></use>
       </g>
-      <path id="csl-roof" class="cs-y" opacity="0" d="M0 56.75L56.75 0L113.5 56.75H87.3L56.75 26.2L26.2 56.75Z"><animate attributeName="opacity" from="0" to="1" begin="1.0s" dur="0.3s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0 0 1 1"/></path>
-      <use id="csl-body-yellow" href="#csl-body-shape" class="cs-y" opacity="0"><animate attributeName="opacity" from="0" to="1" begin="1.0s" dur="0.3s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0 0 1 1"/><animate attributeName="opacity" from="1" to="0" begin="1.7s" dur="0.2s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0 0 1 1"/></use>
-      <use id="csl-body-graphite" href="#csl-body-shape" class="cs-ink" opacity="0"><animate attributeName="opacity" from="0" to="1" begin="1.3s" dur="0.3s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1"/></use>
-      <g transform="translate(0 65.75)">
-        <g id="csl-es-slide" transform="translate(130 0)" opacity="0"><animate attributeName="opacity" from="0" to="1" begin="1.9s" dur="0.01s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0 0 1 1"/><animateTransform attributeName="transform" type="translate" from="130 0" to="0 0" begin="1.9s" dur="0.9s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.2 0.6 0.3 1"/>
-          <g id="csl-es-spin" transform="rotate(360 88.5 27)"><animateTransform attributeName="transform" type="rotate" from="360 88.5 27" to="0 88.5 27" begin="1.9s" dur="0.9s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.2 0.6 0.3 1"/>
-            <path class="cs-ink" d="M113.5 0H90.5A27 27 0 0 0 90.5 54H113.5V35.5H90.5A8.5 8.5 0 0 1 90.5 18.5H113.5Z"/>
-          </g>
+      <use id="csl-body-graphite" href="#csl-body-shape" class="cs-ink" opacity="0"><animate attributeName="opacity" from="0" to="1" begin="0.90s" dur="0.9s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.45 0 0.55 1"/></use>
+      <g id="csl-lemana-pro-logo" transform="scale(0.864304) translate(-122.3 0)">
+        <g id="csl-sign" opacity="1"><animate attributeName="opacity" from="1" to="0" begin="0.50s" dur="0.45s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1"/><path class="cs-o" d="M215.756 27.6348L192.903 60.3822L213.581 80.7534V112.561H169.273L161.841 146.605H253.376V64.6951L215.756 27.6348Z"/><path class="cs-y" d="M187.708 0L122.04 64.6996V146.602H161.841V112.559V80.751L187.708 55.2648L215.756 27.6324L187.708 0Z"/><path class="cs-b" d="M187.707 55.2671L215.755 27.6348L192.902 60.3822L187.707 55.2671Z"/><path class="cs-b" d="M161.841 112.564V146.608L169.273 112.564H161.841Z"/></g>
+      </g>
+      <g transform="translate(0 78.8)">
+        <g id="csl-es-slide" transform="translate(130 0)" opacity="0"><animate attributeName="opacity" from="0" to="1" begin="1.60s" dur="0.01s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0 0 1 1"/><animateTransform attributeName="transform" type="translate" from="130 0" to="0 0" begin="1.60s" dur="0.9s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.2 0.6 0.3 1"/>
+          <g id="csl-es-spin" transform="rotate(360 88.5 27)"><animateTransform attributeName="transform" type="rotate" from="360 88.5 27" to="0 88.5 27" begin="1.60s" dur="0.9s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.2 0.6 0.3 1"/><path class="cs-ink" d="M113.5 0H90.5A27 27 0 0 0 90.5 54H113.5V35.5H90.5A8.5 8.5 0 0 1 90.5 18.5H113.5Z"/></g>
         </g>
       </g>
     </g></g></g>
   </g>
-  <g id="csl-cs-static" class="cs-static-g"><path class="cs-y" d="M0 56.75L56.75 0L113.5 56.75H87.3L56.75 26.2L26.2 56.75Z"/><g transform="translate(0 65.75)"><path class="cs-ink" d="M0 0H18.5V35.5H37V0H55.5V68L41.5 54H0Z"/><path class="cs-ink" d="M113.5 0H90.5A27 27 0 0 0 90.5 54H113.5V35.5H90.5A8.5 8.5 0 0 1 90.5 18.5H113.5Z"/></g></g>
+  <g id="csl-cs-static" class="cs-static-g"><g class="roof-idle"><g class="roof-hop"><path class="cs-y" transform="scale(0.864304) translate(-122.3 0)" d="M122.04 80.75V64.7L187.7 0L253.4 64.7V80.75H213.58L187.55 55.05L161.84 80.75Z"/></g></g><g transform="translate(0 78.8)"><path class="cs-ink" d="M0 0H18.5V35.5H37V0H55.5V68L41.5 54H0Z"/><path class="cs-ink" d="M113.5 0H90.5A27 27 0 0 0 90.5 54H113.5V35.5H90.5A8.5 8.5 0 0 1 90.5 18.5H113.5Z"/></g></g>
 </svg><span class="hub" id="hub">HUB</span></div>
     <h1 class="hi" aria-label="Привет, коллега!"><span class="hi-text" id="hiText">Привет, коллега!</span><span class="beam" id="beam" aria-hidden="true"></span></h1>
     <p class="ask" aria-label="Чем хочешь заняться?"><span id="askText" aria-hidden="true"></span><span class="caret" aria-hidden="true"></span></p>
@@ -242,7 +261,7 @@
     <button class="back" id="back" aria-label="К выбору занятия">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
     </button>
-    <span class="brand-wrap"><svg class="cs-mini" viewBox="0 0 113.5 133.75" aria-hidden="true"><path class="cs-y" d="M0 56.75L56.75 0L113.5 56.75H87.3L56.75 26.2L26.2 56.75Z"/><g transform="translate(0 65.75)"><path class="cs-ink" d="M0 0H18.5V35.5H37V0H55.5V68L41.5 54H0Z"/><path class="cs-ink" d="M113.5 0H90.5A27 27 0 0 0 90.5 54H113.5V35.5H90.5A8.5 8.5 0 0 1 90.5 18.5H113.5Z"/></g></svg><span class="brand">Отработка задач</span></span>
+    <span class="brand-wrap alive"><svg class="cs-mini" viewBox="-0.3 0 113.8 146.8" aria-hidden="true"><g class="roof-idle"><g class="roof-hop"><path class="cs-y" transform="scale(0.864304) translate(-122.3 0)" d="M122.04 80.75V64.7L187.7 0L253.4 64.7V80.75H213.58L187.55 55.05L161.84 80.75Z"/></g></g><g transform="translate(0 78.8)"><path class="cs-ink" d="M0 0H18.5V35.5H37V0H55.5V68L41.5 54H0Z"/><path class="cs-ink" d="M113.5 0H90.5A27 27 0 0 0 90.5 54H113.5V35.5H90.5A8.5 8.5 0 0 1 90.5 18.5H113.5Z"/></g></svg><span class="brand">Отработка задач</span></span>
     <div class="tabs" role="tablist" aria-label="Режим">
       <button role="tab" data-tab="work">Отработать</button>
       <button role="tab" data-tab="collect">Собрать</button>
@@ -257,7 +276,7 @@
     <div class="mode-head"><h2 id="modeTitle"></h2><p id="modeDesc"></p></div>
     <div id="access"></div>
     <div class="grid" id="grid"></div>
-    <footer class="foot"><div class="lockup"><svg class="cs-mini" viewBox="0 0 113.5 133.75" aria-hidden="true"><path class="cs-y" d="M0 56.75L56.75 0L113.5 56.75H87.3L56.75 26.2L26.2 56.75Z"/><g transform="translate(0 65.75)"><path class="cs-ink" d="M0 0H18.5V35.5H37V0H55.5V68L41.5 54H0Z"/><path class="cs-ink" d="M113.5 0H90.5A27 27 0 0 0 90.5 54H113.5V35.5H90.5A8.5 8.5 0 0 1 90.5 18.5H113.5Z"/></g></svg><span class="hub">HUB</span></div><span class="foot-name">Центр снабжения</span></footer>
+    <footer class="foot"><div class="lockup alive"><svg class="cs-mini" viewBox="-0.3 0 113.8 146.8" aria-hidden="true"><g class="roof-idle"><g class="roof-hop"><path class="cs-y" transform="scale(0.864304) translate(-122.3 0)" d="M122.04 80.75V64.7L187.7 0L253.4 64.7V80.75H213.58L187.55 55.05L161.84 80.75Z"/></g></g><g transform="translate(0 78.8)"><path class="cs-ink" d="M0 0H18.5V35.5H37V0H55.5V68L41.5 54H0Z"/><path class="cs-ink" d="M113.5 0H90.5A27 27 0 0 0 90.5 54H113.5V35.5H90.5A8.5 8.5 0 0 1 90.5 18.5H113.5Z"/></g></svg><span class="hub">HUB</span></div><span class="foot-name">Центр снабжения</span></footer>
   </main>
 </section>
 
@@ -356,10 +375,11 @@ const state = { mode: 'work', root: null, access: 'none', loading: false, error:
    ============================================================ */
 let greeting = false, skipGreeting = false;
 const csLogo = document.getElementById('csLogo');
-const LOGO_END = 3.0;   // анимация логотипа длится 2,8 с
+const LOGO_END = 2.7;   // анимация логотипа длится 2,5 с
 if (csLogo.pauseAnimations) csLogo.pauseAnimations();
 const hub = document.getElementById('hub');
-let hubTimer = null, hubAnim = null, hubColorAnim = null;
+let hubTimer = null, hubAnim = null, hubColorAnim = null, aliveTimer = null;
+const helloLogo = document.querySelector('.hello-logo');
 const HUB_ORANGE = '#FF9000', HUB_YELLOW = '#FBC311';
 /* плашка влетает повёрнутой, перекручивается с перелётом и садится ровно */
 function playHub() {
@@ -396,7 +416,8 @@ function fillCounts() {
 
 function showGreetingFinal() {
   greetAnims.forEach(a => a.finish());
-  clearTimeout(hubTimer);
+  clearTimeout(hubTimer); clearTimeout(aliveTimer);
+  helloLogo.classList.add('alive');
   if (hubAnim) hubAnim.finish();
   if (hubColorAnim) hubColorAnim.finish();
   hub.classList.add('in');
@@ -414,7 +435,8 @@ async function playGreeting() {
   if (reduced) { showGreetingFinal(); return; }
   greeting = true;
   logoAt(0);
-  hubTimer = setTimeout(playHub, 2800);   // как только «С» встала на место
+  hubTimer = setTimeout(playHub, 2550);   // как только «С» встала на место
+  aliveTimer = setTimeout(() => helloLogo.classList.add('alive'), 2700);
   Dots.show();
   await wait(1350);   // приветствие начинает проявляться, когда из логотипа собирается ЦС
 
@@ -760,6 +782,19 @@ document.getElementById('app').addEventListener('click', async e => {
     catch { act.textContent = 'Выделите путь вручную'; }
     setTimeout(() => { act.textContent = 'Копировать путь'; }, 2000);
   }
+});
+
+/* кровля подпрыгивает при наведении на логотип */
+document.querySelectorAll('.hello-logo, .brand-wrap, .foot .lockup').forEach(el => {
+  el.addEventListener('pointerenter', () => {
+    if (!el.classList.contains('alive') || reduced) return;
+    el.querySelectorAll('.roof-hop').forEach(g => {
+      g.classList.remove('hop'); void g.getBoundingClientRect(); g.classList.add('hop');
+    });
+  });
+});
+document.addEventListener('animationend', e => {
+  if (e.animationName === 'roofHop') e.target.classList.remove('hop');
 });
 
 /* копирование пути из шапки */
